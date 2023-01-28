@@ -2,6 +2,7 @@ const axios = require('axios')
 const generateSign = require('../utils/sign')
 const { decodeRaw } = require('../utils/utils')
 const { ethers, Wallet}  = require("ethers") ;
+const rsaVerify = require('../utils/verify')
 
 const appKey = "";
 const appSecret = "";
@@ -144,7 +145,14 @@ const getSupportTokens = async (chain = null) => {
         if(result.data.code === 200) {
             console.log(result.data.data)
             const raw = result.data.data.raw.split('_')[0]
-            return raw
+            const signData = result.data.data.raw.split('_')[1]
+            
+            if(rsaVerify(raw, signData)) {
+                return raw
+            } else {
+                console.log('raw error')
+                return ''
+            }
         }
         console.log(result.data.msg)
     } catch(error) {

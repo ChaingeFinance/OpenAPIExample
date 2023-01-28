@@ -1,5 +1,6 @@
 const Chainge = require("@chainge/sdk");
 const { ethers, Wallet}  = require("ethers") ;
+const rsaVerify = require('../utils/verify')
 
 const privateKey = ''
 const rpcUrl = '' // The rpc that wants to operate the network
@@ -356,6 +357,12 @@ const mainByCrossChain = async () => {
             return
         }
         const raw = transactionRaw.data.raw.split('_')[0]
+        const signData = transactionRaw.data.raw.split('_')[1]
+        if(!rsaVerify(raw, signData)) {
+          console.log('raw error')
+          return
+        }
+
         // Parsing Raw
         const transaction = Chainge.decodeRaw(raw)
 
@@ -444,6 +451,11 @@ const mainByAggregator = async () => {
             return
         }
         const raw = transactionRaw.data.raw.split('_')[0]
+        const signData = transactionRaw.data.raw.split('_')[1]
+        if(!rsaVerify(raw, signData)) {
+          console.log('raw error')
+          return
+        }
         // Parsing Raw
         const transaction = Chainge.decodeRaw(raw)
 
